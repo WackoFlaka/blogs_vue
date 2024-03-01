@@ -1,43 +1,63 @@
 <template>
-  <div class="home flex-grow-1 d-flex flex-column align-items-center justify-content-center">
-    <div class="home-card p-5 card align-items-center shadow rounded elevation-3">
-      <img src="https://bcw.blob.core.windows.net/public/img/8600856373152463" alt="CodeWorks Logo"
-        class="rounded-circle">
-      <h1 class="my-5 bg-dark text-white p-3 rounded text-center">
-        Vue 3 Starter
-      </h1>
+  <section class="row justify-content-center mt-5">
+
+    <div class="col-10 text-start">
+      <Login />
     </div>
-  </div>
+
+    <div class="col-10">
+      <div v-if="account">
+        <button class="btn btn-warning fs-1 py-2 px-4 my-5" data-bs-toggle="modal" data-bs-target="#form">+</button>
+      </div>
+      <div v-else>
+        <p></p>
+      </div>
+    </div>
+
+    <div class="col-10">
+      <div v-for="blog in blogs" :key="blog.id">
+        <!-- NOTE Component -->
+        <Card :blog="blog" />
+      </div>
+    </div>
+  </section>
+  <FormComponent />
 </template>
 
 <script>
+import Pop from '../utils/Pop.js';
+import { blogService } from '../services/BlogService.js'
+import { computed, onMounted } from 'vue';
+import { AppState } from '../AppState.js'
+import Card from '../components/Card.vue';
+import FormComponent from '../components/FormComponent.vue';
+
 export default {
   setup() {
-    return {
-      
+    async function getAllBlogPosts() {
+      try {
+        await blogService.getAllBlogPosts();
+      }
+      catch (error) {
+        Pop.error(error);
+      }
     }
-  }
+    onMounted(() => {
+      getAllBlogPosts();
+    });
+    return {
+      blogs: computed(() => AppState.blogs),
+      account: computed(() => AppState.account)
+    };
+  },
+  components: { Card, FormComponent }
 }
 </script>
 
 <style scoped lang="scss">
-.home {
-  display: grid;
-  height: 80vh;
-  place-content: center;
-  text-align: center;
-  user-select: none;
-
-  .home-card {
-    width: clamp(500px, 50vw, 100%);
-
-    >img {
-      height: 200px;
-      max-width: 200px;
-      width: 100%;
-      object-fit: contain;
-      object-position: center;
-    }
-  }
+img {
+  object-fit: cover;
+  height: 40vh;
+  width: 40vh;
 }
 </style>

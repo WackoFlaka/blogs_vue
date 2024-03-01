@@ -23,7 +23,6 @@
           <i class="mdi" :class="theme == 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></i>
         </button>
       </div>
-      <Login />
     </div>
   </nav>
 </template>
